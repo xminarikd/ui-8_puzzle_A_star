@@ -4,23 +4,18 @@ import java.util.Arrays;
 
 public class Uzol {
 
-    private static final int T_x = -1;
-    private static final int T_y = 0;
-    private static final int B_x = 1;
-    private static final int B_y = 0;
-    private static final int L_x = 0;
-    private static final int L_y = -1;
-    private static final int R_x = 0;
-    private static final int R_y = 1;
+    //B,T,L,R
+    int[] row = { 1, -1, 0, 0 };
+    int[] col = { 0, 0, -1, 1 };
 
     private Uzol parent;
     private int[][] board;
     private int level;
-    private char lastopp;
+    private int lastopp;
     private int Hcost;
     private int a, b;
 
-    public Uzol(int[][] board, Uzol parent, int level, char lastopp) {
+    public Uzol(int[][] board, Uzol parent, int level, int lastopp) {
         this.parent = parent;
         this.board = Arrays.stream(board).map(int[]::clone).toArray(int[][]::new);
 
@@ -30,33 +25,12 @@ public class Uzol {
         getblank();
     }
 
-public void move(char opp){
-    switch (opp){
-        case 'L': {
-            board[a][b] = board[a][b] + board[a + L_x][b + L_y];
-            board[a + L_x][b + L_y] = board[a][b] - board[a + L_x][b + L_y];
-            board[a][b] = board[a][b] - board[a + L_x][b + L_y];
-            break;
-        }
-        case 'R':{
-            board[a][b] = board[a][b] + board[a+R_x][b+R_y];
-            board[a+R_x][b+R_y] = board[a][b] - board[a+R_x][b+R_y];
-            board[a][b] = board[a][b] - board[a+R_x][b+R_y];
-            break;
-        }
-        case 'T':{
-            board[a][b] = board[a][b] + board[a+T_x][b+T_y];
-            board[a+T_x][b+T_y] = board[a][b] - board[a+T_x][b+T_y];
-            board[a][b] = board[a][b] - board[a+T_x][b+T_y];
-            break;
-        }
-        case 'B':{
-            board[a][b] = board[a][b] + board[a+B_x][b+B_y];
-            board[a+B_x][b+B_y] = board[a][b] - board[a+B_x][b+B_y];
-            board[a][b] = board[a][b] - board[a+B_x][b+B_y];
-            break;
-        }
-    }
+public void move(int opp){
+
+            this.board[a][b] = this.board[a][b] + this.board[a + row[opp]][b + col[opp]];
+            this.board[a + row[opp]][b + col[opp]] = this.board[a][b] - this.board[a + row[opp]][b + col[opp]];
+            this.board[a][b] = this.board[a][b] - this.board[a + row[opp]][b + col[opp]];
+
     getblank();
 }
 
@@ -64,9 +38,10 @@ public void move(char opp){
     public void getblank() {
         for (int row = 0; row < board.length; row++)
             for (int col = 0; col < board[row].length; col++)
-                if (board[row][col] == 0) {
+                if (this.board[row][col] == 0) {
                     setA(row);
                     setB(col);
+                    return;
                 }
     }
 
@@ -83,7 +58,7 @@ public void move(char opp){
         return level;
     }
 
-    public char getLastopp() {
+    public int getLastopp() {
         return lastopp;
     }
 
@@ -103,7 +78,7 @@ public void move(char opp){
         this.level = level;
     }
 
-    public void setLastopp(char lastopp) {
+    public void setLastopp(int lastopp) {
         this.lastopp = lastopp;
     }
 
