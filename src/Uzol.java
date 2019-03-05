@@ -4,32 +4,30 @@ import java.util.Arrays;
 
 public class Uzol {
 
-    public static final int T_x = -1;
-    public static final int T_y = 0;
-    public static final int B_x = 1;
-    public static final int B_y = 0;
-    public static final int L_x = 0;
-    public static final int L_y = -1;
-    public static final int R_x = 0;
-    public static final int R_y = 1;
+    private static final int T_x = -1;
+    private static final int T_y = 0;
+    private static final int B_x = 1;
+    private static final int B_y = 0;
+    private static final int L_x = 0;
+    private static final int L_y = -1;
+    private static final int R_x = 0;
+    private static final int R_y = 1;
 
     private Uzol parent;
     private int[][] board;
     private int level;
     private char lastopp;
-    private int H1cost;
-    private int H2cost;
+    private int Hcost;
     private int a, b;
 
     public Uzol(int[][] board, Uzol parent, int level, char lastopp) {
         this.parent = parent;
         this.board = Arrays.stream(board).map(int[]::clone).toArray(int[][]::new);
 
-        this.H1cost = -1;
-        this.H2cost = -1;
+        this.Hcost = -1;
         this.level = level;
         this.lastopp = lastopp;
-
+        getblank();
     }
 
 public void move(char opp){
@@ -89,12 +87,8 @@ public void move(char opp){
         return lastopp;
     }
 
-    public int getH1cost() {
-        return H1cost;
-    }
-
-    public int getH2cost() {
-        return H2cost;
+    public int getHcost() {
+        return Hcost;
     }
 
     public void setParent(Uzol parent) {
@@ -113,12 +107,8 @@ public void move(char opp){
         this.lastopp = lastopp;
     }
 
-    public void setH1cost(int h1cost) {
-        H1cost = h1cost;
-    }
-
-    public void setH2cost(int h2cost) {
-        H2cost = h2cost;
+    public void setHcost(int hcost) {
+        Hcost = hcost;
     }
 
     public void setA(int a) {
