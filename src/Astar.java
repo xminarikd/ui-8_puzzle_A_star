@@ -9,18 +9,18 @@ public class Astar {
    private int[] row = { 1, -1, 0, 0 };
    private int[] col = { 0, 0, -1, 1 };
 
-    public void solve(int[][] start, int[][] ciel, int b_x, int b_y, int heuristic){
+    public void solve(byte[][] start, byte[][] ciel, int b_x, int b_y, int heuristic){
         long st = System.currentTimeMillis();
         int pocet = 0;
         Set<String> visited = new HashSet<String>();
-
         PCom compar = new PCom();
+
         Queue<Uzol> pq = new PriorityQueue<Uzol>(1000,compar);
         Uzol root = new Uzol(start,null,0, -1);
         root.setHcost(0);
-
         pq.add(root);
         Uzol curr = root;
+
         while(!Arrays.deepEquals(curr.getBoard(),ciel)){
             visited.add(Arrays.deepToString(curr.getBoard()));
            for(int i = 0; i < 4; i++){
@@ -36,6 +36,7 @@ public class Astar {
                        } else {
                            child.setHcost(/*curr.getHcost() +*/ h_two(child.getBoard(), ciel));
                        }
+
                        pq.add(child);
                        pocet++;
                    }
@@ -58,12 +59,12 @@ public class Astar {
         return (x >= 0 && x < vyska && y >= 0 && y < sirka);
     }
 
-    public int[][] testboard(int[][] board,int opp,int a, int b){
-        int[][] testboard = Arrays.stream(board).map(int[]::clone).toArray(int[][]::new);
+    public byte[][] testboard(byte[][] board,int opp,int a, int b){
+        byte[][] testboard = Arrays.stream(board).map(byte[]::clone).toArray(byte[][]::new);
 
-        testboard[a][b] = testboard[a][b] + testboard[a + row[opp]][b + col[opp]];
-        testboard[a + row[opp]][b + col[opp]] = testboard[a][b] - testboard[a + row[opp]][b + col[opp]];
-        testboard[a][b] = testboard[a][b] - testboard[a + row[opp]][b + col[opp]];
+        testboard[a][b] = (byte) (testboard[a][b] + testboard[a + row[opp]][b + col[opp]]);
+        testboard[a + row[opp]][b + col[opp]] = (byte) (testboard[a][b] - testboard[a + row[opp]][b + col[opp]]);
+        testboard[a][b] = (byte) (testboard[a][b] - testboard[a + row[opp]][b + col[opp]]);
 
     return testboard;
     }
@@ -85,7 +86,7 @@ public class Astar {
         else return "start";
     }
 
-    private int h_one(int[][] board,int[][]ciel){
+    private int h_one(byte[][] board,byte[][]ciel){
         int diff = 0;
         for (int row = 0; row < board.length; row++)
             for (int col = 0; col < board[row].length; col++){
@@ -95,7 +96,7 @@ public class Astar {
         return diff;
     }
 
-    private int h_two(int[][] board, int[][]ciel){
+    private int h_two(byte[][] board, byte[][]ciel){
         int diff = 0;
         int tmp;
         for (int row = 0; row < board.length; row++)
@@ -107,7 +108,7 @@ public class Astar {
     }
 
 
-    private int getgoalcell(int[][]ciel , int value){
+    private int getgoalcell(byte[][]ciel , int value){
         for (int row = 0; row < ciel.length; row++)
             for (int col = 0; col < ciel[row].length; col++){
                 if(ciel[row][col] == value){
