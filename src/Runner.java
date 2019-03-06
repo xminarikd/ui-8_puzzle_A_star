@@ -4,15 +4,22 @@ public class Runner {
 
     public static void main(String[] args){
 
-        int[][] start = { {1, 8, 2}, {0, 4, 3}, {7, 6, 5} };
-        int[][] ciel = { {1, 2, 3}, {4, 5, 6}, {7, 8, 0} };
+      /*  int[][] start = { {8, 0, 6}, {5, 4, 7}, {2, 3, 1} };
+        int[][] ciel = { {0, 1, 2}, {3, 4, 5}, {6, 7, 8} };
+
+        int x = 0;
+        int y = 1;
+*/
+        int[][] start = { {4, 3, 2, 6, 1}, {9, 8, 7, 5, 0} };
+        int[][] ciel = { {0, 1, 2, 3, 4}, {5, 6, 7, 8, 9} };
 
         int x = 1;
-        int y = 0;
+        int y = 4;
 
         Astar na = new Astar();
-        na.solve(start,ciel,x,y,1);
-        System.out.println("Dokon4il som neviem co :D");
+        na.setSirka(5);
+        na.setVyska(2);
+        na.solve(start,ciel,x,y,2);
     }
 
 }

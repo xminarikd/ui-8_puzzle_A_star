@@ -3,18 +3,20 @@ package src;
 import java.util.*;
 
 public class Astar {
-    private int len = 3;
+    private int sirka;
+    private int vyska;
     //B,T,L,R
    private int[] row = { 1, -1, 0, 0 };
    private int[] col = { 0, 0, -1, 1 };
 
     public void solve(int[][] start, int[][] ciel, int b_x, int b_y, int heuristic){
-
+        long st = System.currentTimeMillis();
+        int pocet = 0;
         Set<String> visited = new HashSet<String>();
 
         PCom compar = new PCom();
         Queue<Uzol> pq = new PriorityQueue<Uzol>(1000,compar);
-        Uzol root = new Uzol(start,null,0, (char) 0);
+        Uzol root = new Uzol(start,null,0, -1);
         root.setHcost(0);
 
         pq.add(root);
@@ -30,21 +32,30 @@ public class Astar {
                        visited.add(Arrays.deepToString(child.getBoard()));
 
                        if (heuristic == 1) {
-                           child.setHcost(h_one(child.getBoard(), ciel));
+                           child.setHcost(/*curr.getHcost() +*/ h_one(child.getBoard(), ciel));
                        } else {
-                           child.setHcost(h_two(child.getBoard(), ciel));
+                           child.setHcost(/*curr.getHcost() +*/ h_two(child.getBoard(), ciel));
                        }
                        pq.add(child);
+                       pocet++;
                    }
                }
            }
            curr = pq.poll();
         }
-        System.out.println("OK");
+        long end = System.currentTimeMillis();
+        backtrack(curr);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        System.out.println("Pocet spracovanych uzlov je " + pocet);
+        System.out.println("Hlbka: " + curr.getLevel());
+        System.out.println("Doba trvania " + (end - st) + "ms");
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+
+
     }
 
     public boolean check(int x, int y) {
-        return (x >= 0 && x < len && y >= 0 && y < len);
+        return (x >= 0 && x < vyska && y >= 0 && y < sirka);
     }
 
     public int[][] testboard(int[][] board,int opp,int a, int b){
@@ -55,7 +66,23 @@ public class Astar {
         testboard[a][b] = testboard[a][b] - testboard[a + row[opp]][b + col[opp]];
 
     return testboard;
+    }
 
+    public void backtrack(Uzol root) {
+        if (root == null) {
+            return;
+        }
+        backtrack(root.getParent());
+        System.out.println(translate(root.getLastopp()));
+        System.out.println(Arrays.deepToString(root.getBoard()).replaceAll("], ","]" + System.lineSeparator()));
+    }
+
+    public String translate(int cislo){
+        if(cislo == 0) return "bottom";
+        else if(cislo == 1) return "top";
+        else if(cislo == 2) return "left";
+        else if(cislo == 3) return "right";
+        else return "start";
     }
 
     private int h_one(int[][] board,int[][]ciel){
@@ -74,7 +101,7 @@ public class Astar {
         for (int row = 0; row < board.length; row++)
             for (int col = 0; col < board[row].length; col++){
                 tmp = getgoalcell(ciel,board[row][col]);
-                diff += (Math.abs(row - (tmp/len) ) + Math.abs(col - (tmp%len)));
+                diff += (Math.abs(row - (tmp / sirka) ) + Math.abs(col - (tmp % sirka)));
             }
         return diff;
     }
@@ -84,11 +111,26 @@ public class Astar {
         for (int row = 0; row < ciel.length; row++)
             for (int col = 0; col < ciel[row].length; col++){
                 if(ciel[row][col] == value){
-                    return (row*len)+col;
+                    return (row * sirka) + col;
                 }
 
             }
         return -1;
     }
 
+    public int getSirka() {
+        return sirka;
+    }
+
+    public void setSirka(int sirka) {
+        this.sirka = sirka;
+    }
+
+    public int getVyska() {
+        return vyska;
+    }
+
+    public void setVyska(int vyska) {
+        this.vyska = vyska;
+    }
 }
