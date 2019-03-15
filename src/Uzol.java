@@ -2,6 +2,10 @@ package src;
 
 import java.util.Arrays;
 
+/**
+ * Trieda, ktora reprezentuje dany hlavolam
+ * Obsahuje dvojroymerne pole na uchovanie stavu, hlbku, rodica,poslednu operaciu a heristicku hodnotu
+ */
 public class Uzol {
 
     //B,T,L,R
@@ -64,22 +68,6 @@ public void move(int opp){
 
     public int getHcost() {
         return Hcost;
-    }
-
-    public void setParent(Uzol parent) {
-        this.parent = parent;
-    }
-
-    public void setBoard(byte[][] board) {
-        this.board = board;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public void setLastopp(int lastopp) {
-        this.lastopp = lastopp;
     }
 
     public void setHcost(int hcost) {

@@ -2,6 +2,9 @@ package src;
 
 import java.util.*;
 
+/**
+ * Trieda, ktora obsahuje hlavny algoritmus s nazvom A-star (A*)
+ */
 public class Astar {
     private int sirka;
     private int vyska;
@@ -9,57 +12,75 @@ public class Astar {
    private int[] row = { 1, -1, 0, 0 };
    private int[] col = { 0, 0, -1, 1 };
 
-    public void solve(byte[][] start, byte[][] ciel, int b_x, int b_y, int heuristic){
+    /**
+     * Algoritmus A*, ktory na zaklade prehladavania hlada postupnost operacii, na dosiahnutie cieloveho stavu
+     * Tento algoritmus vytvara nove uzly, ktore reprezentuju nove stavy.
+     * Tieto stavy sa uchovavaju v prioritnom rade, a na zaklade heristiky sa vynerie najlepsi uzol
+     * @param start dvojrozmerne pole, v ktorom je reprezentovany pociatocny stav
+     * @param ciel  dvojrozmerne pole, v ktorom je reprezentovany cielovy stav
+     * @param b_x   x suradnica prazdneho miesta v hlavolame
+     * @param b_y   y suradnica prazdneho miesta hlavolamu
+     * @param heuristic cislo heristiky, ktora je pouzita v algoritme
+     */
+    public void solve(byte[][] start, byte[][] ciel, int b_x, int b_y, int heuristic) {
         long st = System.currentTimeMillis();
         int pocet = 0;
-        Set<String> visited = new HashSet<String>();
+        Uzol curr;
         PCom compar = new PCom();
 
-        Queue<Uzol> pq = new PriorityQueue<Uzol>(1000,compar);
-        Uzol root = new Uzol(start,null,0, -1);
+        Set<String> visited = new HashSet<String>();
+        Queue<Uzol> pq = new PriorityQueue<Uzol>(1000, compar);
+
+        Uzol root = new Uzol(start, null, 0, -1);
         root.setHcost(0);
         pq.add(root);
-        Uzol curr = root;
 
-        while(!Arrays.deepEquals(curr.getBoard(),ciel)){
+        curr = root;
+
+        while (!Arrays.deepEquals(curr.getBoard(), ciel)) {
             visited.add(Arrays.deepToString(curr.getBoard()));
-           for(int i = 0; i < 4; i++){
-               if (check(curr.getA() + row[i], curr.getB() + col[i])) {
-                   if(!visited.contains(Arrays.deepToString(testboard(curr.getBoard(),i,curr.getA(),curr.getB())))) {
+            if (pq.isEmpty()) {
+                System.out.println("Riesenie sa nepodarilo najst");
+                return;
+            }
+            for (int i = 0; i < 4; i++) {
+                if (check(curr.getA() + row[i], curr.getB() + col[i])) {
+                    if (!visited.contains(Arrays.deepToString(testboard(curr.getBoard(), i, curr.getA(), curr.getB())))) {
 
-                       Uzol child = new Uzol(curr.getBoard(), curr, curr.getLevel() + 1, i);
-                       child.move(i);
-                       visited.add(Arrays.deepToString(child.getBoard()));
+                        Uzol child = new Uzol(curr.getBoard(), curr, curr.getLevel() + 1, i);
+                        child.move(i);
+                        visited.add(Arrays.deepToString(child.getBoard()));
 
-                       if (heuristic == 1) {
-                           child.setHcost(/*curr.getHcost() +*/ h_one(child.getBoard(), ciel));
-                       } else {
-                           child.setHcost(/*curr.getHcost() +*/ h_two(child.getBoard(), ciel));
-                       }
+                        if (heuristic == 1) {
+                            child.setHcost( /*curr.getHcost() +*/ h_one(child.getBoard(), ciel));
+                        } else {
+                            child.setHcost( /*curr.getHcost() +*/ h_two(child.getBoard(), ciel));
+                        }
 
-                       pq.add(child);
-                       pocet++;
-                   }
-               }
-           }
-           curr = pq.poll();
+                        pq.add(child);
+                        pocet++;
+                    }
+                }
+            }
+            curr = pq.poll();
         }
         long end = System.currentTimeMillis();
-        backtrack(curr);
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-        System.out.println("Pocet spracovanych uzlov je " + pocet);
-        System.out.println("Hlbka: " + curr.getLevel());
-        System.out.println("Doba trvania " + (end - st) + "ms");
-        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-
-
+        results(curr,st,end,pocet);
     }
 
-    public boolean check(int x, int y) {
+    /**
+     * Testovanie moznoti pouzitia operacie
+     * @return vracia ci sa moze vzkonat testovana operacia
+     */
+    private boolean check(int x, int y) {
         return (x >= 0 && x < vyska && y >= 0 && y < sirka);
     }
 
-    public byte[][] testboard(byte[][] board,int opp,int a, int b){
+    /**
+     *
+     * @return vytvori novy stav hlavolamu, ktory sa nasledne tetuje ci sa uz dany stav neprehladaval
+     */
+    private byte[][] testboard(byte[][] board,int opp,int a, int b){
         byte[][] testboard = Arrays.stream(board).map(byte[]::clone).toArray(byte[][]::new);
 
         testboard[a][b] = (byte) (testboard[a][b] + testboard[a + row[opp]][b + col[opp]]);
@@ -69,15 +90,9 @@ public class Astar {
     return testboard;
     }
 
-    public void backtrack(Uzol root) {
-        if (root == null) {
-            return;
-        }
-        backtrack(root.getParent());
-        System.out.println(translate(root.getLastopp()));
-        System.out.println(Arrays.deepToString(root.getBoard()).replaceAll("], ","]" + System.lineSeparator()));
-    }
-
+    /**
+     * @return vrati slovnu podobu operacie, ktora zadpoveda internemu cislu
+     */
     public String translate(int cislo){
         if(cislo == 0) return "bottom";
         else if(cislo == 1) return "top";
@@ -86,6 +101,11 @@ public class Astar {
         else return "start";
     }
 
+    /**
+     * Heuristicka funkcia cislo 1
+     * Heristika na zaklade toho, kolko cisel sa nenachadza na spravnom mieste
+     * @return  vrati hodnotu heristiky pre dany stav
+     */
     private int h_one(byte[][] board,byte[][]ciel){
         int diff = 0;
         for (int row = 0; row < board.length; row++)
@@ -96,6 +116,11 @@ public class Astar {
         return diff;
     }
 
+    /**
+     *Heuristicka funkcia cislo 2
+     *Heristika na zaklade toho, ako daleko sa nachadza cislo od cielovej pozicie
+     * @return vrati hodnotu heuristiky pre dany stav
+     */
     private int h_two(byte[][] board, byte[][]ciel){
         int diff = 0;
         int tmp;
@@ -119,18 +144,30 @@ public class Astar {
         return -1;
     }
 
-    public int getSirka() {
-        return sirka;
+    /**
+     * Vypis vysledku hladania
+     */
+    private void results(Uzol curr, long st, long end, int pocet){
+        backtrack(curr);
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+        System.out.println("Pocet spracovanych uzlov je " + pocet);
+        System.out.println("Hlbka: " + curr.getLevel());
+        System.out.println("Doba trvania " + (end - st) + "ms");
+        System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+    }
+
+    private void backtrack(Uzol root) {
+        if (root == null) {
+            return;
+        }
+        backtrack(root.getParent());
+        System.out.println(translate(root.getLastopp()));
+        System.out.println(Arrays.deepToString(root.getBoard()).replaceAll("], ","]" + System.lineSeparator()));
     }
 
     public void setSirka(int sirka) {
         this.sirka = sirka;
     }
-
-    public int getVyska() {
-        return vyska;
-    }
-
     public void setVyska(int vyska) {
         this.vyska = vyska;
     }
