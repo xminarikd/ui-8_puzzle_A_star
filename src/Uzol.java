@@ -2,22 +2,26 @@ package src;
 
 import java.util.Arrays;
 
+/**
+ * Trieda, ktora reprezentuje dany hlavolam
+ * Obsahuje dvojroymerne pole na uchovanie stavu, hlbku, rodica,poslednu operaciu a heristicku hodnotu
+ */
 public class Uzol {
 
     //B,T,L,R
-    int[] row = { 1, -1, 0, 0 };
-    int[] col = { 0, 0, -1, 1 };
+   private static int[] row = { 1, -1, 0, 0 };
+   private static int[] col = { 0, 0, -1, 1 };
 
     private Uzol parent;
-    private int[][] board;
+    private byte[][] board;
     private int level;
     private int lastopp;
     private int Hcost;
     private int a, b;
 
-    public Uzol(int[][] board, Uzol parent, int level, int lastopp) {
+    public Uzol(byte[][] board, Uzol parent, int level, int lastopp) {
         this.parent = parent;
-        this.board = Arrays.stream(board).map(int[]::clone).toArray(int[][]::new);
+        this.board = Arrays.stream(board).map(byte[]::clone).toArray(byte[][]::new);
 
         this.Hcost = -1;
         this.level = level;
@@ -27,9 +31,9 @@ public class Uzol {
 
 public void move(int opp){
 
-            this.board[a][b] = this.board[a][b] + this.board[a + row[opp]][b + col[opp]];
-            this.board[a + row[opp]][b + col[opp]] = this.board[a][b] - this.board[a + row[opp]][b + col[opp]];
-            this.board[a][b] = this.board[a][b] - this.board[a + row[opp]][b + col[opp]];
+            this.board[a][b] = (byte) (this.board[a][b] + this.board[a + row[opp]][b + col[opp]]);
+            this.board[a + row[opp]][b + col[opp]] = (byte) (this.board[a][b] - this.board[a + row[opp]][b + col[opp]]);
+            this.board[a][b] = (byte) (this.board[a][b] - this.board[a + row[opp]][b + col[opp]]);
 
     getblank();
 }
@@ -50,7 +54,7 @@ public void move(int opp){
         return parent;
     }
 
-    public int[][] getBoard() {
+    public byte[][] getBoard() {
         return board;
     }
 
@@ -64,22 +68,6 @@ public void move(int opp){
 
     public int getHcost() {
         return Hcost;
-    }
-
-    public void setParent(Uzol parent) {
-        this.parent = parent;
-    }
-
-    public void setBoard(int[][] board) {
-        this.board = board;
-    }
-
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
-    public void setLastopp(int lastopp) {
-        this.lastopp = lastopp;
     }
 
     public void setHcost(int hcost) {
