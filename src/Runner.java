@@ -15,9 +15,10 @@ public class Runner {
 
         test1();
         test1_2();
-//        test2();
-//        test3();
-//        test4();
+        test2();
+        test3();
+        test4();
+        test5();
     }
 
     /**
@@ -78,6 +79,15 @@ public class Runner {
         ciel =new byte[][]{ {0, 1, 2, 3, 4}, {5, 6, 7, 8, 9}};
         getblank();
         solve(5,2,1);
+    }
+    /*
+    Neexistuje riesenie
+     */
+    public static void test5(){
+        start = new byte[][]{{8, 1, 2}, {0, 4, 3}, {7, 6, 5}};
+        ciel =new byte[][]{ {0, 1, 2,}, {3, 4, 5}, {6, 7, 8}};
+        getblank();
+        solve(3,3,1);
     }
 
 
